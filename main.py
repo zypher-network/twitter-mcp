@@ -45,8 +45,15 @@ class TwitterHandler:
         if self.limited:
             return False, ""
         res = self.client.create_tweet(text=text)
-        tweet_id = res.data.get("id")
-        return True, tweet_id
+        if res.status_code == 429 and res.headers["x-user-limit-24hour-remaining"] == 0:
+            self.limited = True
+            return False, ""
+        if res.status_code == 200:
+            tweet_id = res.data.get("id")
+            return True, tweet_id
+        else:
+            return False, ""
+
 
     def refresh(self):
         token = self.origin.refresh_token(token_url="https://api.twitter.com/2/oauth2/token", refresh_token=self.refresh_token)
