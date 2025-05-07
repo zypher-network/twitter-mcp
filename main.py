@@ -60,6 +60,7 @@ class TwitterHandler:
         self.access_token = token["access_token"]
         self.refresh_token = token.get("refresh_token", "")
         self.set_client(self.access_token)
+        self.limited = False
 
 
 app = FastAPI()
